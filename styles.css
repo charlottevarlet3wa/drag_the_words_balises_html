@@ -30,7 +30,7 @@ body {
 
 #words {
     /* position: fixed; */
-position:absolute;
+    position:absolute;
     /* float:right; */
     height: 600px;
     /* height: 100%; */
@@ -160,4 +160,17 @@ position:absolute;
 
 .angle-brackets {
   color: #D4D4D4;
+}
+
+.primary-btn {
+  padding: 10px;
+  margin: 10px;
+  color: white;
+  background-color: #ff7a7d;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  font-family:'Courier New', Courier, monospace;
+  font-size: 1.2em;
+  font-weight: bold;
 }
