@@ -4,7 +4,7 @@ body {
 
 #game {
     position: relative;
-    width:900px;
+    width:600px;
     display: flex;
     justify-content: space-between;
 
@@ -12,7 +12,7 @@ body {
 
 #text {
     background-color: white;
-    width: 900px;
+    width: 600px;
     height:800px;
     overflow-y: scroll;
     position: relative;
@@ -21,7 +21,7 @@ body {
 #text {
     overflow-y: auto; /* Enables vertical scrolling */
     max-height: 800px; /* Maximum height for the text section */
-    width: 700px;
+    width: 400px;
     padding: 10px; /* Padding for inner spacing */
     background-color: white; /* Background color for the text section */
 
