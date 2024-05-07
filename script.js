@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
               let modifiedText = encodeHtml(text); 
               let matchIndex = 1;
               let wordCounts = {};
+              let draggables = [];
 
               // First pass to count occurrences
               modifiedText = modifiedText.replace(/\*([^*]+)\*/g, function(match, p1) {
@@ -29,8 +30,11 @@ document.addEventListener('DOMContentLoaded', function () {
                   draggable.classList.add('draggable');
                   draggable.textContent = `${word} (${count})`;
                   draggable.dataset.word = word; // Store actual word as data attribute
-                  wordsContainer.appendChild(draggable);
+                  draggables.push(draggable); // Collect all draggables in an array
               });
+
+              shuffle(draggables); // Shuffle the array of draggable elements
+              draggables.forEach(draggable => wordsContainer.appendChild(draggable)); // Append shuffled elements to container
 
               container.innerHTML = modifiedText.replace(/\n/g, '<br>').replace(/ {5}/g, '&nbsp;&nbsp;');
               applyDraggableListeners();
