@@ -2,51 +2,62 @@ document.addEventListener('DOMContentLoaded', function () {
   loadContent();
 
   function loadContent() {
-    fetch('content.txt')
-      .then(response => response.text())
-      .then(text => {
-        const container = document.getElementById('text-container');
-        const wordsContainer = document.getElementById('words');
-        let modifiedText = encodeHtml(text); 
-        let matchIndex = 1;
-        let draggables = [];
+      fetch('content.txt')
+          .then(response => response.text())
+          .then(text => {
+              const container = document.getElementById('text-container');
+              const wordsContainer = document.getElementById('words');
+              let modifiedText = encodeHtml(text); 
+              let matchIndex = 1;
+              let wordCounts = {};
 
-        modifiedText = modifiedText.replace(/\*([^*]+)\*/g, function(match, p1) {
-          let draggable = document.createElement('div');
-          draggable.setAttribute('draggable', true);
-          draggable.classList.add('draggable');
-          draggable.textContent = p1.trim();
-          draggables.push(draggable);
-          return `<input type="text" id="input-${matchIndex++}" data-answer="${p1.trim()}">`;
-        });
+              // First pass to count occurrences
+              modifiedText = modifiedText.replace(/\*([^*]+)\*/g, function(match, p1) {
+                  const word = p1.trim();
+                  if(wordCounts[word]) {
+                      wordCounts[word]++;
+                  } else {
+                      wordCounts[word] = 1;
+                  }
+                  return `<input type="text" id="input-${matchIndex++}" data-answer="${word}">`;
+              });
 
-        shuffle(draggables);
-        draggables.forEach(draggable => wordsContainer.appendChild(draggable));
-        container.innerHTML = modifiedText.replace(/\n/g, '<br>').replace(/ {5}/g, '&nbsp;&nbsp;');
-        applyDraggableListeners();
-        applyDroppableListeners();
-      })
-      .catch(error => console.error('Error loading the text file:', error));
+              // Create draggable elements with counts
+              Object.entries(wordCounts).forEach(([word, count]) => {
+                  let draggable = document.createElement('div');
+                  draggable.setAttribute('draggable', true);
+                  draggable.classList.add('draggable');
+                  draggable.textContent = `${word} (${count})`;
+                  draggable.dataset.word = word; // Store actual word as data attribute
+                  wordsContainer.appendChild(draggable);
+              });
+
+              container.innerHTML = modifiedText.replace(/\n/g, '<br>').replace(/ {5}/g, '&nbsp;&nbsp;');
+              applyDraggableListeners();
+              applyDroppableListeners();
+          })
+          .catch(error => console.error('Error loading the text file:', error));
   }
 
   function applyDraggableListeners() {
-    document.querySelectorAll('.draggable').forEach(item => {
-      item.addEventListener('dragstart', event => {
-        event.dataTransfer.setData('text', event.target.innerText);
+      document.querySelectorAll('.draggable').forEach(item => {
+          item.addEventListener('dragstart', event => {
+              event.dataTransfer.setData('text', item.dataset.word); // Use the actual word for dragging
+          });
       });
-    });
   }
 
   function applyDroppableListeners() {
-    document.querySelectorAll('input[type="text"]').forEach(input => {
-      input.addEventListener('dragover', event => event.preventDefault());
-      input.addEventListener('drop', event => {
-        event.preventDefault();
-        input.value = event.dataTransfer.getData('text');
+      document.querySelectorAll('input[type="text"]').forEach(input => {
+          input.addEventListener('dragover', event => event.preventDefault());
+          input.addEventListener('drop', event => {
+              event.preventDefault();
+              input.value = event.dataTransfer.getData('text');
+          });
       });
-    });
   }
 });
+
 
 function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
