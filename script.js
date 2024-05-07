@@ -25,16 +25,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
               // Create draggable elements with counts
               Object.entries(wordCounts).forEach(([word, count]) => {
+                  let draggableWrapper = document.createElement('div');
+                  draggableWrapper.classList.add('draggable-wrapper');
+
                   let draggable = document.createElement('div');
                   draggable.setAttribute('draggable', true);
                   draggable.classList.add('draggable');
                   draggable.textContent = `${word} (${count})`;
                   draggable.dataset.word = word; // Store actual word as data attribute
-                  draggables.push(draggable); // Collect all draggables in an array
+
+                  let checkbox = document.createElement('input');
+                  checkbox.type = 'checkbox';
+                  checkbox.classList.add('confirm-checkbox');
+                  checkbox.onchange = function() {
+                      if (checkbox.checked) {
+                          draggable.style.backgroundColor = 'lightgrey';
+                          checkbox.style.backgroundColor = '#cd1316';  // Dark red background when checked
+                      } else {
+                          draggable.style.backgroundColor = 'white';
+                          checkbox.style.backgroundColor = '';  // Reset to default
+                      }
+                  };
+
+                  draggableWrapper.appendChild(draggable);
+                  draggableWrapper.appendChild(checkbox);
+                  draggableWrapper.style.display = 'flex'; 
+                  draggableWrapper.style.alignItems = 'center';
+                  draggableWrapper.style.justifyContent = 'space-between';
+                  draggableWrapper.style.width = '100%';
+
+                  draggables.push(draggableWrapper); 
               });
 
-              shuffle(draggables); // Shuffle the array of draggable elements
-              draggables.forEach(draggable => wordsContainer.appendChild(draggable)); // Append shuffled elements to container
+              shuffle(draggables); 
+              draggables.forEach(draggableWrapper => wordsContainer.appendChild(draggableWrapper)); 
 
               container.innerHTML = modifiedText.replace(/\n/g, '<br>').replace(/ {5}/g, '&nbsp;&nbsp;');
               applyDraggableListeners();
@@ -61,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
   }
 });
+
 
 
 function shuffle(array) {
